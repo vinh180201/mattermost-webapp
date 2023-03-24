@@ -16,6 +16,8 @@ const getRecentEmojisKey = (userId) => ['recent_emojis', userId].join(':');
 const getWasLoggedInKey = () => 'was_logged_in';
 const teamIdJoinedOnLoadKey = 'teamIdJoinedOnLoad';
 
+const getPreviousButtonKey = (userId) => ['user_prev_button', userId].join(':');
+
 const getPathScopedKey = (path, key) => {
     if (path === '' || path === '/') {
         return key;
@@ -113,6 +115,14 @@ class LocalStorageStoreClass {
 
     setPreviousTeamId(userId, teamId) {
         this.setItem(getPreviousTeamIdKey(userId), teamId);
+    }
+
+    getPreviousButton(userId) {
+        return this.getItem(getPreviousButtonKey(userId));
+    }
+
+    setPreviousButton(userId, button) {
+        this.setItem(getPreviousButtonKey(userId), button);
     }
 
     /**

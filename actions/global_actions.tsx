@@ -349,6 +349,8 @@ export async function getTeamRedirectChannelIfIsAccesible(user: UserProfile, tea
 export async function redirectUserToDefaultTeam() {
     let state = getState();
 
+    console.log(state);
+
     // Assume we need to load the user if they don't have any team memberships loaded or the user loaded
     let user = getCurrentUser(state);
     const shouldLoadUser = Utils.isEmptyObject(getTeamMemberships(state)) || !user;
@@ -369,6 +371,7 @@ export async function redirectUserToDefaultTeam() {
 
     const locale = getCurrentLocale(state);
     const teamId = LocalStorageStore.getPreviousTeamId(user.id);
+    console.log(LocalStorageStore);
 
     let myTeams = getMyTeams(state);
     if (myTeams.length === 0) {
@@ -404,3 +407,5 @@ export async function redirectUserToDefaultTeam() {
 
     getHistory().push('/select_team');
 }
+
+

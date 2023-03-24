@@ -24,7 +24,7 @@ type Props = {
      *
      * @default "regular"
      **/
-    size?: 'sm' | 'lg';
+    size?: 'sm' | 'lg' | 'md';
 
     /** Whether to add hover effect to the icon */
     withHover?: boolean;

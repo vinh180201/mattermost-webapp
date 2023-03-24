@@ -107,7 +107,9 @@ body.app__body #root {
         width: 100%;
     }
 
-
+    #ngu{
+        grid-area: lhs/center;
+    }
     .announcement-bar {
         grid-area: announcement;
     }

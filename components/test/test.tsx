@@ -7,7 +7,7 @@ import {FormattedMessage} from 'react-intl';
 import classNames from 'classnames';
 import {DragDropContext, Droppable, DroppableProvided, DropResult} from 'react-beautiful-dnd';
 import {RouteComponentProps} from 'react-router-dom';
-
+import {getHistory} from 'utils/browser_history';
 import {Team} from '@mattermost/types/teams';
 
 import Permissions from 'mattermost-redux/constants/permissions';
@@ -20,9 +20,11 @@ import Pluggable from 'plugins/pluggable';
 
 import {getCurrentProduct} from 'utils/products';
 import SystemPermissionGate from 'components/permissions_gates/system_permission_gate';
-import TeamButton from 'components/team_sidebar/components/team_button';
+import TeamButton from 'components/test/components/test_button';
 
 import type {PropsFromRedux} from './index';
+import team from 'components/admin_console/team_channel_settings/team';
+import { isActive } from 'utils/filter_users';
 
 export interface Props extends PropsFromRedux {
     location: RouteComponentProps['location'];
@@ -193,7 +195,10 @@ export default class TeamSidebar extends React.PureComponent<Props, State> {
     }
 
     render() {
-        console.log(this.props.currentTeamId)
+        if (!this.props.prevButton) {
+            this.props.actions.setPreviousButton('chat');
+        }
+        console.log(this.props.prevButton);
         const root: Element | null = document.querySelector('#root');
         if (this.props.myTeams.length <= 1) {
             root!.classList.remove('multi-teams');
@@ -202,82 +207,68 @@ export default class TeamSidebar extends React.PureComponent<Props, State> {
         root!.classList.add('multi-teams');
 
         const plugins = [];
+        const currentTeam = this.props.currentTeam;
+        
         const sortedTeams = filterAndSortTeamsByDisplayName(this.props.myTeams, this.props.locale, this.props.userTeamsOrderPreference);
-
         const currentProduct = getCurrentProduct(this.props.products, this.props.location.pathname);
         if (currentProduct && !currentProduct.showTeamSidebar) {
             return null;
         }
 
-        const teams = sortedTeams.map((team: Team, index: number) => {
-            return (
-                <TeamButton
-                    key={'switch_team_' + team.name}
-                    url={`/${team.name}`}
-                    tip={team.display_name}
-                    active={team.id === this.props.currentTeamId}
-                    displayName={team.display_name}
-                    order={index + 1}
-                    showOrder={this.state.showOrder}
-                    unread={this.props.unreadTeamsSet.has(team.id)}
-                    mentions={this.props.mentionsInTeamMap.has(team.id) ? this.props.mentionsInTeamMap.get(team.id) : 0}
-                    teamIconUrl={Utils.imageURLForTeam(team)}
-                    switchTeam={(url: string) => this.props.actions.switchTeam(url, currentProduct ? team : undefined)}
-                    isDraggable={true}
-                    teamId={team.id}
-                    teamIndex={index}
-                    isInProduct={Boolean(currentProduct)}
-                />
-            );
-        });
-
-        const joinableTeams = [];
-
-        const plusIcon = (
+        const teamIcon = (
             <i
-                className='icon icon-plus'
+                className='fa fa-users'
                 role={'img'}
-                aria-label={Utils.localizeMessage('sidebar.team_menu.button.plusIcon', 'Plus Icon')}
+                aria-label={Utils.localizeMessage('sidebar.team_menu.button.teamIcon', 'Team Icon')}
             />
         );
 
-        if (this.props.moreTeamsToJoin && !this.props.experimentalPrimaryTeam) {
-            joinableTeams.push(
-                <TeamButton
-                    btnClass='team-btn__add'
-                    key='more_teams'
-                    url='/select_team'
-                    tip={
-                        <FormattedMessage
-                            id='team_sidebar.join'
-                            defaultMessage='Other teams you can join'
-                        />
-                    }
-                    content={plusIcon}
-                    switchTeam={this.props.actions.switchTeam}
-                />,
-            );
-        } else {
-            joinableTeams.push(
-                <SystemPermissionGate
-                    permissions={[Permissions.CREATE_TEAM]}
-                    key='more_teams'
-                >
-                    <TeamButton
-                        btnClass='team-btn__add'
-                        url='/create_team'
-                        tip={
-                            <FormattedMessage
-                                id='navbar_dropdown.create'
-                                defaultMessage='Create a Team'
-                            />
-                        }
-                        content={plusIcon}
-                        switchTeam={this.props.actions.switchTeam}
+        const chatIcon = (
+            <i
+                className='fa fa-comments'
+                role={'img'}
+                aria-label={Utils.localizeMessage('sidebar.team_menu.button.chatIcon', 'Chat Icon')}
+            />
+        );
+
+        const joinableTeams = [];
+
+        joinableTeams.push(
+            <TeamButton
+                btnClass='team-btn__add'
+                key='chat'
+                btn='chat'
+                url={`/`}
+                active={this.props.prevButton === 'chat' ? true : false}
+                tip={
+                    <FormattedMessage
+                        id='team_sidebar.join'
+                        defaultMessage='Other teams you can join'
                     />
-                </SystemPermissionGate>,
-            );
-        }
+                }
+                content={chatIcon}
+                switchTeam={this.props.actions.switchTeam}
+                setPreviousButton={this.props.actions.setPreviousButton}
+            />
+        );
+        joinableTeams.push(
+            <TeamButton
+            btnClass='team-btn__add'
+            key='more_teams'
+            btn='team'
+            url={currentTeam !== undefined ? `/${currentTeam.name}/select_team` : '/'}
+            active={this.props.prevButton === 'team' ? true : false}
+            tip={
+                <FormattedMessage
+                    id='team_sidebar.join'
+                    defaultMessage='Other teams you can join'
+                />
+            }
+            content={teamIcon}
+            switchTeam={this.props.actions.switchTeam}
+            setPreviousButton={this.props.actions.setPreviousButton}
+            />
+        );
 
         // Disable team sidebar pluggables in products until proper support can be provided.
         const isNonChannelsProduct = !currentProduct;
@@ -323,7 +314,7 @@ export default class TeamSidebar extends React.PureComponent<Props, State> {
                                             ref={provided.innerRef}
                                             {...provided.droppableProps}
                                         >
-                                            {teams}
+                                            {/* {teams} */}
                                             {provided.placeholder}
                                         </div>
                                     );

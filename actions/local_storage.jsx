@@ -18,3 +18,15 @@ export function setPreviousTeamId(teamId) {
         return {data: true};
     };
 }
+
+export function setPreviousButton(button) {
+    return (dispatch, getState) => {
+        console.log(`setPreviousButton ${button}`);
+        const userId = getCurrentUserId(getState());
+
+        LocalStorageStore.setPreviousButton(userId, button);
+
+        return {data: true};
+    };
+}
+

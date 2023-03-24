@@ -44,6 +44,7 @@ import {Animations} from 'components/preparing_workspace/steps';
 import OpenPricingModalPost from 'components/custom_open_pricing_modal_post_renderer';
 import AccessProblem from 'components/access_problem';
 
+
 import {initializePlugins} from 'plugins';
 import 'plugins/export.js';
 import Pluggable from 'plugins/pluggable';
@@ -78,6 +79,8 @@ import store from 'stores/redux_store.jsx';
 import {getSiteURL} from 'utils/url';
 import A11yController from 'utils/a11y_controller';
 import TeamSidebar from 'components/team_sidebar';
+import Test from 'components/test';
+
 
 import {UserProfile} from '@mattermost/types/users';
 
@@ -639,7 +642,8 @@ export default class Root extends React.PureComponent<Props, State> {
                         <GlobalHeader/>
                         <CloudEffects/>
                         <OnBoardingTaskList/>
-                        <TeamSidebar/>
+                        {/* <TeamSidebar/> */}
+                        <Test/>
                         <DelinquencyModalController/>
                         <Switch>
                             {this.props.products?.map((product) => (
@@ -663,6 +667,7 @@ export default class Root extends React.PureComponent<Props, State> {
                                                 </div>
                                             );
                                         }
+
                                         return (
                                             <LoggedIn {...props}>
                                                 {pluggable}
@@ -683,7 +688,7 @@ export default class Root extends React.PureComponent<Props, State> {
                                         />
                                     )}
                                 />
-                            ))}
+                            ))}                           
                             <LoggedInRoute
                                 path={'/:team'}
                                 component={NeedsTeam}

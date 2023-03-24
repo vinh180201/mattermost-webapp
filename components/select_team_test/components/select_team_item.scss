@@ -1,0 +1,32 @@
+.team_card {
+  display: inline-block;
+  height: 220px;
+  width: 300px;
+  box-shadow: 0 0.2rem 0.4rem -0.075rem rgba(0,0,0,.1);
+  background: #fff;
+  align-items: center;
+  margin-right: 21px;
+  margin-bottom: 20px;
+  
+}
+
+.team_icon_container {
+  height: 72px;
+  width: 72px;
+  background-color: #3cb371;
+  text-align: center;
+  position: relative;
+  display: block;
+  margin: 52px auto 12px auto;
+  padding-top: 3px;
+}
+
+.team_icon_container > h2 {
+  color: #fff;
+}
+
+.team_name {
+  display: flex;
+  justify-content: center;
+}
+

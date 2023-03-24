@@ -28,6 +28,9 @@ import {Team, TeamMembership} from '@mattermost/types/teams';
 import {Channel, ChannelMembership} from '@mattermost/types/channels';
 import {NeedsTeamComponent} from 'types/store/plugins';
 
+const LazySelectTeam = React.lazy(() => import('components/select_team_test'));
+const SelectTeam = makeAsyncComponent('SelectTeam', LazySelectTeam);
+
 const BackstageController = makeAsyncComponent('BackstageController', LazyBackstageController);
 
 let wakeUpInterval: number;
@@ -204,7 +207,6 @@ export default class NeedsTeam extends React.PureComponent<Props, State> {
         if (Constants.RESERVED_TEAM_NAMES.includes(props.match.params.team)) {
             return;
         }
-
         const {data: team} = await this.props.actions.getTeamByName(props.match.params.team);
         if (team && team.delete_at === 0) {
             const {error} = await props.actions.addUserToTeam(team.id, props.currentUser && props.currentUser.id);
@@ -309,6 +311,10 @@ export default class NeedsTeam extends React.PureComponent<Props, State> {
                 <Route
                     path={'/:team/emoji'}
                     component={BackstageController}
+                />
+                <Route
+                    path={'/:team/select_team'}
+                    component={SelectTeam}
                 />
                 {this.props.plugins?.map((plugin) => (
                     <Route
